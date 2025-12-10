@@ -1,6 +1,7 @@
 import wx 
 import random
 
+#movie directory list
 movies = [
     {"title": "the dark knight", "genre": "action", "year": 2008},
     {"title": "la la land", "genre": "romance", "year": 2016},
@@ -78,7 +79,7 @@ movies = [
     {"title": "midsommar", "genre": "horror", "year": 2019},
     {"title": "the nun", "genre": "horror", "year": 2018}
 ]
-
+# hangman stages
 stages = [
     """
       ░░░░░░░░░░░░░░░░░
@@ -146,6 +147,7 @@ stages = [
 ]
 
 class HangmanFrame(wx.Frame):
+# creation of widgets
     def __init__(self):
         super().__init__(None, title="💀 THE ULTIMATE MOVIE HANGMAN 💀", size=(790, 775))
         panel = wx.Panel(self)
@@ -210,6 +212,7 @@ class HangmanFrame(wx.Frame):
         self.movie_pool = random.sample(movies, len(movies))
         self.start_game()
 
+# initialization of game
     def start_game(self):
         if not self.movie_pool:
             self.movie_pool = random.sample(movies, len(movies))
@@ -229,6 +232,7 @@ class HangmanFrame(wx.Frame):
         self.stage_label.SetLabel(stages[self.chances].strip("\n"))
         self.Layout()
 
+    # guess button
     def on_guess(self, event):
         guess = self.input_box.GetValue().lower()
         self.input_box.SetValue("")
@@ -252,6 +256,8 @@ class HangmanFrame(wx.Frame):
             else:
                 display += "_ "
         self.blanks.SetLabel(display)
+
+        #consequences of a wrong guess
         if not correct_guess:
             self.chances -= 1
             self.message.SetLabel("Wrong guess!")
@@ -259,17 +265,22 @@ class HangmanFrame(wx.Frame):
             self.message.SetLabel("Good guess!")
         self.chances_remaining.SetLabel(f"Chances left: {self.chances}")
         self.stage_label.SetLabel(stages[self.chances])
+
+        # win condition
         if "_" not in display:
             self.message.SetLabel("YOU WON!! ")
             self.guess_button.Disable()
             self.hint_button.Disable()
             return
+
+        # loss condition 
         if self.chances == 0:
             self.message.SetLabel(f"You lost! The movie was: {self.chosen_word}")
             self.blanks.SetLabel(self.chosen_word)
             self.guess_button.Disable()
             self.hint_button.Disable()
 
+    # hint button
     def on_hint(self, event):
         if self.hints_used == 0:
             self.hint_label.SetLabel("Hint: Genre → " + self.chosen_movie["genre"])
@@ -280,6 +291,7 @@ class HangmanFrame(wx.Frame):
         else:
             self.hint_label.SetLabel("Hint: No hints remaining ")
 
+#runs the app
 app = wx.App()
 frame = HangmanFrame()
 frame.Show()
